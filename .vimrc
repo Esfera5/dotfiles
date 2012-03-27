@@ -81,7 +81,6 @@ func! HighlightTooLongLines()
   highlight TrailingChars ctermfg=red ctermbg=yellow guifg=red guibg=yellow
   match TrailingChars '\(\s\+$\|\(^.\{80,\}\)\@<=.\)'
 endfunc
-
 augroup filetypedetect
   au BufNewFile,BufRead * call HighlightTooLongLines()
 augroup END

@@ -5,48 +5,34 @@ import re
 import subprocess
 import sys
 
-def get_sessions():
-  process = subprocess.Popen(['/usr/bin/tmux', 'list-sessions'],
+def get_output(command):
+  process = subprocess.Popen(command,
                              stdout = subprocess.PIPE,
                              stderr = subprocess.PIPE)
   output, errors = process.communicate()
-  sessions = []
-  for line in output.split('\n'):
-    if line.find('window') > 0:
-      idx = line.find(':')
-      if idx > 0:
-        sessions.append(line[:idx])
+  return output
+
+def get_sessions():
+  output = get_output(['/usr/bin/tmux', 'list-sessions'])
+  sessions = [re.sub(':.*$', '', line) for line in output.split('\n')
+              if line.find('window') > 0]
   return sorted(sessions)
 
-def get_clients():
-  cmd = ['/bin/bash', '-c', 'ls /home/$USER/clients']
-  process = subprocess.Popen(cmd,
-                             stdout = subprocess.PIPE,
-                             stderr = subprocess.PIPE)
-  output, errors = process.communicate()
-  clients = []
-  for client in output.split('\n'):
-    client = client.strip()
-    if client:
-      clients.append(client)
-  return sorted(clients)
+def get_depot_directories():
+  output = get_output(['/bin/bash', '-c', 'ls $DEPOT'])
+  return sorted([dir for dir in output.split('\n') if dir])
 
 def print_options(command, prefix):
+  prefixed = lambda names: [name for name in names
+                            if not prefix or name.startswith(prefix)]
   if command == 'rsc':
-    sessions = get_sessions()
-    if prefix:
-      sessions = [session for session in sessions
-                  if session.startswith(prefix)]
+    sessions = prefixed(get_sessions())
     print '\n'.join(sessions)
   elif command == 'mksc':
-    clients = get_clients()
-    if prefix:
-      clients = [client for client in clients
-                 if client.startswith(prefix)]
+    depot_dirs = prefixed(get_depot_directories())
     sessions = frozenset(get_sessions())
-    for client in clients:
-      if client not in sessions:
-        print client
+    depot_dirs = [dir for dir in depot_dirs if dir not in sessions]
+    print '\n'.join(depot_dirs)
 
 def main():
   if len(sys.argv) > 1:
@@ -56,11 +42,11 @@ def main():
       prefix = sys.argv[2]
     print_options(command, prefix)
   else:
-    print '[Clients]'
+    print '[Depot]'
     sessions = frozenset(get_sessions())
-    for client in get_clients():
-      if client not in sessions:
-        print '  mksc %s' % client
+    for dir in get_depot_directories():
+      if dir not in sessions:
+        print '  mksc %s' % dir
     print
     print '[Live Sessions]'
     for session in get_sessions():
