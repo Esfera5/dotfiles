@@ -63,7 +63,7 @@ nmap ,gc :%s/[ <Tab>]\+$//<CR>
 nmap ,nt :NERDTree<CR>
 
 "-----------------------------------------------------------------------------
-" File detection based commands.
+" Plugins.
 
 if &diff
   " Diff highlighting
@@ -71,8 +71,8 @@ if &diff
   autocmd VimEnter * call DiffSetup()
 else
   " Restore last line position when editing a file again.
-  "set viminfo='10,\"100,:20,r/tmp,r/usr/local/google/tmp,n~/.viminfo
-  set viminfo='10,\"100,:20,r/tmp,n~/.viminfo
+  set viminfo='10,\"100,:20,r/tmp,r/usr/local/google/tmp,n~/.viminfo
+  "set viminfo='10,\"100,:20,r/tmp,n~/.viminfo
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 endif
 
@@ -84,6 +84,8 @@ endfunc
 augroup filetypedetect
   au BufNewFile,BufRead * call HighlightTooLongLines()
 augroup END
+
+source $HOME/.vim/spell.vim
 
 " Local stuff.
 if filereadable(expand('$HOME/.vimrc_local'))
