@@ -37,9 +37,21 @@ alias vi='vim -X'
 alias vim='vim -X'
 alias vimdiff='vimdiff -X'
 
+# Screen stuff.
+#function mksc() { export WORKDIR=$PWD ; screen -A -U -d -R -S $1 ; }
+#function rsc() { screen -A -x -S $1 ; }
+#function lsc() { $HOME/bin/screen-complete.py ; }
+#complete -o nospace -C "$HOME/bin/screen-complete.py" mksc
+#complete -o nospace -C "$HOME/bin/screen-complete.py" rsc
 # Tmux stuff.
-function mksc() { export WORKDIR=$PWD ; tmux new-session -s $1 ; }
-function rsc() { tmux attach-session -t $1 ; }
+function rsc() {
+  CLIENTID=$1.`date +%S`; tmux new-session -d -t $1 -s $CLIENTID \;\
+    set-option destroy-unattached \; attach-session -t $CLIENTID
+}
+function mksc() {
+  export WORKDIR=$PWD; tmux new-session -d -s $1
+  rsc $1
+}
 function lsc() { $HOME/bin/tmux-complete.py ; }
 complete -o nospace -C "$HOME/bin/tmux-complete.py" mksc
 complete -o nospace -C "$HOME/bin/tmux-complete.py" rsc
@@ -48,4 +60,4 @@ complete -o nospace -C "$HOME/bin/tmux-complete.py" rsc
 [ -f $HOME/.bashrc_local ] && source $HOME/.bashrc_local
 
 # Last thing to do: change directory if this is a TMUX session.
-[ -n "$WORKDIR" ] && [ -d "$WORKDIR" ] && cd "$WORKDIR"
+[ -d "$WORKDIR" ] && cd "$WORKDIR"
