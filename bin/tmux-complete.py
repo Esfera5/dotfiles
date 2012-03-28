@@ -14,9 +14,9 @@ def get_output(command):
 
 def get_sessions():
   output = get_output(['/usr/bin/tmux', 'list-sessions'])
-  sessions = [re.sub(':.*$', '', line) for line in output.split('\n')
+  sessions = [re.sub('(\.\d+)?:.*$', '', line) for line in output.split('\n')
               if line.find('window') > 0]
-  return sorted(sessions)
+  return sorted(list(frozenset(sessions)))
 
 def get_depot_directories():
   output = get_output(['/bin/bash', '-c', 'ls $DEPOT'])
