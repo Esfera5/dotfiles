@@ -13,7 +13,6 @@ shopt -s checkwinsize
 # Prompt and terminal title.
 export PS1='\[\033[01;32m\]\h\[\033[00m\]:\[\033[01;34m\]\w/\[\033[00m\]\$ '
 export PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME}: ${PWD/$HOME/~}/\007"'
-export MACHINE=$HOSTNAME
 
 export EDITOR='vim -X'
 [ -d $HOME/bin/export ] && export PATH=$HOME/bin/:$PATH
@@ -38,26 +37,23 @@ alias vim='vim -X'
 alias vimdiff='vimdiff -X'
 
 # Tmux stuff.
+export MACHINE=$HOSTNAME
+export WORKDIR=$PWD
 function rsc() {
+  [ -d $PWD/$1 ] && export WORKDIR=$PWD/$1
   CLIENTID=$1.`date +%S`
   tmux new-session -d -t $1 -s $CLIENTID \;\
     set-option destroy-unattached \;\
     attach-session -t $CLIENTID
 }
 function mksc() {
-  export WORKDIR=$PWD
+  [ -d $PWD/$1 ] && export WORKDIR=$PWD/$1
   tmux new-session -d -s $1
   rsc $1
 }
 function lsc() { $HOME/bin/tmux-complete.py ; }
 complete -o nospace -C "$HOME/bin/tmux-complete.py" mksc
 complete -o nospace -C "$HOME/bin/tmux-complete.py" rsc
-# Screen stuff.
-#function mksc() { export WORKDIR=$PWD ; screen -A -U -d -R -S $1 ; }
-#function rsc() { screen -A -x -S $1 ; }
-#function lsc() { $HOME/bin/screen-complete.py ; }
-#complete -o nospace -C "$HOME/bin/screen-complete.py" mksc
-#complete -o nospace -C "$HOME/bin/screen-complete.py" rsc
 
 # Local stuff.
 [ -f $HOME/.bashrc_local ] && source $HOME/.bashrc_local
