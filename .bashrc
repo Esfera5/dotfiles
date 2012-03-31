@@ -38,17 +38,16 @@ alias vimdiff='vimdiff -X'
 
 # Tmux stuff.
 export MACHINE=$HOSTNAME
+export DEPOT=$HOME
 function rsc() {
-  export WORKDIR=$PWD
-  [ -d $PWD/$1 ] && export WORKDIR=$PWD/$1
+  [ -d $DEPOT/$1 ] && export WORKDIR=$DEPOT/$1
   CLIENTID=$1.`date +%S`
   tmux new-session -d -t $1 -s $CLIENTID \;\
     set-option destroy-unattached \;\
     attach-session -t $CLIENTID
 }
 function mksc() {
-  export WORKDIR=$PWD
-  [ -d $PWD/$1 ] && export WORKDIR=$PWD/$1
+  [ -d $DEPOT/$1 ] && export WORKDIR=$DEPOT/$1
   tmux new-session -d -s $1
   rsc $1
 }
