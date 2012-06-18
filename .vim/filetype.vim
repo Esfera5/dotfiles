@@ -5,9 +5,12 @@ endif
 
 " Associate unknown filetypes.
 augroup filetypedetect
+  au! BufRead,BufNewFile *.gclient                  setf python
+  au! BufRead,BufNewFile *.glue                     setf python
   au! BufRead,BufNewFile *.{gyp,gypi,gclient}       setf python
   au! BufRead,BufNewFile *.{proto,protodevel}       setf proto
   au! BufRead,BufNewFile .tmux.conf*                setf tmux
+  au! BufRead,BufNewFile *.ninja                    setf ninja
 augroup END
 
 " Some languages prefers tabs.
