@@ -78,12 +78,26 @@ endif
 
 " Highlight trailing spaces and 80+ characters long lines
 func! HighlightTooLongLines()
-  highlight TrailingChars ctermfg=red ctermbg=yellow guifg=red guibg=yellow
-  match TrailingChars '\(\s\+$\|\(^.\{80,\}\)\@<=.\)'
+  highlight TrailingChars ctermfg=black ctermbg=cyan guifg=black guibg=cyan
+  "match TrailingChars '\(\s\+$\|\(^.\{80,\}\)\@<=.\)'
+  match TrailingChars /\%81v.\+/
+  let b:trainling_chars_hl = 1
 endfunc
 augroup filetypedetect
   au BufNewFile,BufRead * call HighlightTooLongLines()
 augroup END
+
+func! ToggleHighlightTooLongLines()
+  if exists("b:trainling_chars_hl") && b:trainling_chars_hl
+    highlight clear TrailingChars
+    let b:trainling_chars_hl = 0
+    echo "Trailing char highlight off."
+  else
+    call HighlightTooLongLines()
+    echo "Trailing char highlight on."
+  endif
+endfunc
+map <silent> <F6> <Esc>:call ToggleHighlightTooLongLines()<CR>
 
 source $HOME/.vim/spell.vim
 
