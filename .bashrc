@@ -35,6 +35,7 @@ alias ..='cd ..'
 alias vi='vim -X'
 alias vim='vim -X'
 alias vimdiff='vimdiff -X'
+alias less='less -S'
 
 # Tmux stuff.
 export MACHINE=$HOSTNAME
