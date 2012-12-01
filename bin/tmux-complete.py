@@ -42,15 +42,16 @@ def main():
       prefix = sys.argv[2]
     print_options(command, prefix)
   else:
+    highlight = lambda s: '\033[1;37m%s\033[m' % s
     print '[Depot]'
     sessions = frozenset(get_sessions())
     for dir in get_depot_directories():
       if dir not in sessions:
-        print '  mksc %s' % dir
+        print '  %s' % highlight(dir)
     print
     print '[Live Sessions]'
     for session in get_sessions():
-      print '  rsc %s' % session
+      print '  %s' % highlight(session)
     print
 
 if __name__ == '__main__':
