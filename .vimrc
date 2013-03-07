@@ -61,7 +61,6 @@ nmap ,gc :%s/[ <Tab>]\+$//<CR>
 
 " Shortcut to NERDTree
 nmap ,nt :NERDTree<CR>
-nmap ,ol :MRU<CR>
 
 "-----------------------------------------------------------------------------
 " Plugins.
