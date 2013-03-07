@@ -1,4 +1,5 @@
 syntax on
+set nohidden
 
 set term=xterm
 " Search
