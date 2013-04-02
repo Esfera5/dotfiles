@@ -44,32 +44,44 @@ force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+        # We have color support; assume it's compliant with Ecma-48
+        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+        # a case would tend to support setf rather than setaf.)
+        color_prompt=yes
     else
-	color_prompt=
+        color_prompt=
     fi
 fi
 
 export MACHINE="$HOSTNAME"
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]${MACHINE}\[\033[00m\]:\[\033[01;34m\]\w/\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}${MACHINE}:\w\$ '
-fi
-unset color_prompt force_color_prompt
-export PROMPT_COMMAND='echo -ne "\033]0;${MACHINE}: ${PWD/$HOME/~}/\007"'
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+function git_branch() {
+  local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+  branch=$(echo "$branch" | sed -e 's/^ *//g' -e 's/ *$//g')
+  if [ -n "$branch" ]; then
+    echo " ($branch)"
+  fi
+  echo ""
+}
+
+p_root='${debian_chroot:+($debian_chroot)}'
+p_time='\t'
+p_host='$(echo $MACHINE)'
+p_git='$(git_branch)'
+p_path='\w/'
+p_end='$ '
+if [ "$color_prompt" = yes ]; then
+    p_time="\[\e[1;30m\]${p_time}"
+    p_host="\[\e[01;32m\]${p_host}"
+    p_path="\[\e[01;34m\]${p_path}"
+    if [ -n "$p_git" ]; then
+       p_git="\[\e[1;33m\]${p_git}"
+    fi
+    p_end="\[\e[0m\]${p_end}"
+fi
+PS1="${p_root}${p_time} ${p_host}:${p_path}${p_git}${p_end}"
+unset color_prompt force_color_prompt
+export PROMPT_COMMAND='echo -ne "\e]0;$(echo $MACHINE:${PWD/$HOME/~}/)\007"'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
