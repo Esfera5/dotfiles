@@ -55,33 +55,41 @@ fi
 
 export MACHINE="${HOSTNAME/\.*/}"
 
-function git_branch() {
+function __git_branch() {
   local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
   branch=$(echo "$branch" | sed -e 's/^ *//g' -e 's/ *$//g')
   if [ -n "$branch" ]; then
-    echo " ($branch)"
+    echo "[$branch]"
   fi
   echo ""
 }
 
+case "$TERM" in
+  xterm*)
+    export PROMPT_COMMAND='echo -ne "\e]0;$(echo $MACHINE):${PWD/$HOME/~}$(__git_branch)\007"'
+    ;;
+  *)
+    export PROMPT_COMMAND=
+    ;;
+esac
+
 p_root='${debian_chroot:+($debian_chroot)}'
 p_time='\t'
 p_host='$(echo $MACHINE)'
-p_git='$(git_branch)'
-p_path='\w/'
+p_git='$(__git_branch)'
+p_path='${PWD/$HOME/~}'
 p_end='$ '
 if [ "$color_prompt" = yes ]; then
-    p_time="\[\e[1;30m\]${p_time}"
-    p_host="\[\e[01;32m\]${p_host}"
-    p_path="\[\e[01;34m\]${p_path}"
-    if [ -n "$p_git" ]; then
-       p_git="\[\e[1;33m\]${p_git}"
-    fi
-    p_end="\[\e[0m\]${p_end}"
+  p_time="\[\e[1;30m\]${p_time}"
+  p_host="\[\e[1;32m\]${p_host}"
+  p_path="\[\e[1;34m\]${p_path}"
+  if [ -n "$p_git" ]; then
+    p_git="\[\e[1;33m\]${p_git}"
+  fi
+  p_end="\[\e[0m\]${p_end}"
 fi
 PS1="${p_root}${p_time} ${p_host}:${p_path}${p_git}${p_end}"
 unset color_prompt force_color_prompt
-export PROMPT_COMMAND='echo -ne "\e]0;$(echo $MACHINE:${PWD/$HOME/~}/)\007"'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
