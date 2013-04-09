@@ -32,64 +32,30 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        # We have color support; assume it's compliant with Ecma-48
-        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-        # a case would tend to support setf rather than setaf.)
-        color_prompt=yes
-    else
-        color_prompt=
-    fi
-fi
-
 export MACHINE="${HOSTNAME/\.*/}"
 
-function __git_branch() {
-  local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-  branch=$(echo "$branch" | sed -e 's/^ *//g' -e 's/ *$//g')
-  if [ -n "$branch" ]; then
-    echo "[$branch]"
+function __update_prompt() {
+  export GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+  local p_root="\[\e[0m\]${debian_chroot:+($debian_chroot)}"
+  local p_time="\[\e[1;30m\]\t"
+  local p_host="\[\e[1;32m\]$MACHINE"
+  local p_path="\[\e[1;34m\]${PWD/$HOME/~}"
+  local p_git=""
+  if [ -n "$GIT_BRANCH" ]; then
+    p_git="\[\e[1;33m\][$GIT_BRANCH]"
   fi
-  echo ""
+  local p_end="\[\e[0m\]$ "
+  # Exporting values.
+  PS1="${p_root}${p_time} ${p_host}:${p_path}${p_git}${p_end}"
+  export PROMPT_TEXT=""
+  if [ -n "$TMUX" ]; then
+    export PROMPT_TEXT="\033k$(echo $GIT_BRANCH)\033\\"
+  elif [[ "$TERM" =~ "xterm" ]]; then
+    export PROMPT_TEXT="\e]0;$MACHINE:${PWD/$HOME/~}$\007"
+  fi
 }
 
-case "$TERM" in
-  xterm*)
-    export PROMPT_COMMAND='echo -ne "\e]0;$(echo $MACHINE):${PWD/$HOME/~}$(__git_branch)\007"'
-    ;;
-  *)
-    export PROMPT_COMMAND=
-    ;;
-esac
-
-p_root='${debian_chroot:+($debian_chroot)}'
-p_time='\t'
-p_host='$(echo $MACHINE)'
-p_git='$(__git_branch)'
-p_path='${PWD/$HOME/~}'
-p_end='$ '
-if [ "$color_prompt" = yes ]; then
-  p_time="\[\e[1;30m\]${p_time}"
-  p_host="\[\e[1;32m\]${p_host}"
-  p_path="\[\e[1;34m\]${p_path}"
-  if [ -n "$p_git" ]; then
-    p_git="\[\e[1;33m\]${p_git}"
-  fi
-  p_end="\[\e[0m\]${p_end}"
-fi
-PS1="${p_root}${p_time} ${p_host}:${p_path}${p_git}${p_end}"
-unset color_prompt force_color_prompt
+export PROMPT_COMMAND='__update_prompt ; echo -ne "$(echo $PROMPT_TEXT)"'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
