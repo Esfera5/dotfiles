@@ -39,7 +39,7 @@ function __update_prompt() {
   local p_root="\[\e[0m\]${debian_chroot:+($debian_chroot)}"
   local p_time="\[\e[1;30m\]\t"
   local p_host="\[\e[1;32m\]$MACHINE"
-  local p_path="\[\e[1;34m\]${PWD/$HOME/~}"
+  local p_path="\[\e[1;34m\]${PWD/#$HOME/~}"
   local p_git=""
   if [ -n "$GIT_BRANCH" ]; then
     p_git="\[\e[1;33m\][$GIT_BRANCH]"
