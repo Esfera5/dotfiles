@@ -35,7 +35,6 @@ map <C-J> <C-W>j
 map <C-K> <C-W>k
 map <C-H> <C-W>h
 map <C-L> <C-W>l
-map <C-_> <C-W>_
 " Move between buffers
 noremap <C-n> :bnext<CR>
 noremap <C-p> :bprev<CR>
