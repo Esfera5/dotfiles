@@ -1,0 +1,30 @@
+[user]
+  name = Igor Gatis
+  email = igorgatis@gmail.com
+
+[push]
+	default = simple
+
+[color]
+  ui = auto  # make it pretty
+
+[diff]
+  color = auto
+
+[merge]
+  tool = vimdiff
+
+[alias]
+  vimdiff = diff --tool=vimdiff
+  diff = diff --relative
+  dd = diff --relative --name-only
+  p = diff --relative --name-only
+  l = log --decorate
+  lg = log --decorate --graph
+  ls = log --decorate --graph --simplify-by-decoration
+  ld = log --no-merges --format='%h %an <%ae>%n        %s%n' -10
+  s = status -b -s
+  ca = commit
+  ci = commit
+  b = branch
+  co = checkout
