@@ -117,7 +117,7 @@ if [ -z "$TMUX" ]; then
   # Not in TMUX session, adding TMUX attach commands.
   function rsc() {
     pushd "$DEPOT/$1"
-    local clientid="$1.`date +%S`"
+    local clientid="$1.$$"
     tmux -q new-session -t "$1" -s "$clientid" \;\
         set-option destroy-unattached \;\
         set-option default-path "$DEPOT/$1" \;\
