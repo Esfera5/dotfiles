@@ -81,7 +81,9 @@ alias less='less -S'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias alert='notify-send --urgency=low -i \
+"$([ $? = 0 ] && echo terminal || echo error)" \
+"$(history | tail -n1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -104,8 +106,8 @@ bind '"\e[A":history-search-backward'
 bind '"\e[B":history-search-forward'
 
 export EDITOR='vim -X'
-[ -d $HOME/bin ] && export PATH="$HOME/bin/:$PATH"
-[ -d $HOME/bin_local ] && export PATH="$HOME/bin_local/:$PATH"
+[ -d "$HOME/bin" ] && export PATH="$HOME/bin/:$PATH"
+[ -d "$HOME/bin_local" ] && export PATH="$HOME/bin_local/:$PATH"
 
 # TMUX stuff.
 export DEPOT="$HOME/depot"
@@ -116,19 +118,21 @@ function lsc() {
 if [ -z "$TMUX" ]; then
   # Not in TMUX session, adding TMUX attach commands.
   function rsc() {
-    pushd "$DEPOT/$1"
+    [ -z "$1" ] && echo "Usage: $FUNCNAME <foo>" && return
+    pushd "$DEPOT/$1" > /dev/null || return
     local clientid="$1.$$"
     tmux -q new-session -t "$1" -s "$clientid" \;\
         set-option destroy-unattached \;\
         set-option default-path "$DEPOT/$1" \;\
-        attach-session -t "$clientid"
-    popd
+        attach-session -t "$clientid" > /dev/null
+    popd > /dev/null
   }
   complete -o nospace -C "$HOME/bin/tmux-complete.py" rsc
   function mksc() {
-    pushd "$DEPOT/$1"
-    tmux -q new-session -d -s "$1"
-    popd
+    [ -z "$1" ] && echo "Usage: $FUNCNAME <foo>" && return
+    pushd "$DEPOT/$1" > /dev/null || return
+    tmux -q new-session -d -s "$1" > /dev/null
+    popd > /dev/null
     rsc "$1"
   }
   complete -o nospace -C "$HOME/bin/tmux-complete.py" mksc
