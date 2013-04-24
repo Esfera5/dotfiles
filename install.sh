@@ -1,7 +1,7 @@
 #!/bin/sh
 set -x
-rm .bashrc ; ln -s dotfiles/.bashrc
-ln -s dotfiles/.vimrc
-ln -s dotfiles/.vim
-ln -s dotfiles/.tmux.conf
-ln -s dotfiles/bin
+ln -sf dotfiles/.bashrc
+ln -sf dotfiles/.vimrc
+ln -sf dotfiles/.vim
+ln -sf dotfiles/.tmux.conf
+ln -sf dotfiles/bin
