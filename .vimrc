@@ -1,3 +1,15 @@
+set nocompatible  " be iMproved.
+
+" Vundle stuff (begin)
+filetype off      " required!
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+Bundle 'scrooloose/nerdtree'
+Bundle 'Valloric/YouCompleteMe'
+filetype plugin indent on     " required!
+" Vundle stuff (end)
+
 syntax on
 set nohidden
 
