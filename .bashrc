@@ -40,6 +40,9 @@ function __update_prompt() {
   local p_time="\[\e[1;30m\]\t"
   local p_host="\[\e[1;32m\]$MACHINE"
   local p_path="\[\e[1;34m\]${PWD/#$HOME/~}"
+  if [[ ! "$p_path" =~ /$ ]]; then
+    p_path="$p_path/"
+  fi
   local p_git=""
   if [ -n "$GIT_BRANCH" ]; then
     p_git="\[\e[1;33m\][$GIT_BRANCH]"
@@ -118,24 +121,20 @@ function lsc() {
 if [ -z "$TMUX" ]; then
   # Not in TMUX session, adding TMUX attach commands.
   function rsc() {
-    [ -z "$1" ] && echo "Usage: $FUNCNAME <foo>" && return
-    pushd "$DEPOT/$1" > /dev/null || return
-    local clientid="$1.$$"
-    tmux -q new-session -t "$1" -s "$clientid" \;\
+    local client="$1"
+    [ -z "$client" ] && echo "Usage: $FUNCNAME <foo>" && return
+    pushd "$DEPOT/$client" > /dev/null || return
+    if [ ! $(tmux list-sessions | grep --quiet "^$client:") ]; then
+      tmux -q new-session -d -s "$client" > /dev/null
+    fi
+    local sessionid="$client.$$"
+    tmux -q new-session -t "$client" -s "$sessionid" \;\
         set-option destroy-unattached \;\
-        set-option default-path "$DEPOT/$1" \;\
-        attach-session -t "$clientid" > /dev/null
+        set-option default-path "$DEPOT/$client" \;\
+        attach-session -t "$sessionid" > /dev/null
     popd > /dev/null
   }
   complete -o nospace -C "$HOME/bin/tmux-complete.py" rsc
-  function mksc() {
-    [ -z "$1" ] && echo "Usage: $FUNCNAME <foo>" && return
-    pushd "$DEPOT/$1" > /dev/null || return
-    tmux -q new-session -d -s "$1" > /dev/null
-    popd > /dev/null
-    rsc "$1"
-  }
-  complete -o nospace -C "$HOME/bin/tmux-complete.py" mksc
 fi
 
 # Local stuff.
