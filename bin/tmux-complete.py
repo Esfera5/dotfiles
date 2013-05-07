@@ -25,16 +25,11 @@ def get_depot_directories():
   return sorted([dir for dir in output.split('\n') if dir])
 
 def print_options(command, prefix):
-  prefixed = lambda names: [name for name in names
+  prefixed = lambda names: [name for name in frozenset(names)
                             if not prefix or name.startswith(prefix)]
   if command == 'rsc':
-    sessions = prefixed(get_sessions())
+    sessions = prefixed(get_sessions() + get_depot_directories())
     print '\n'.join(sessions)
-  elif command == 'mksc':
-    depot_dirs = prefixed(get_depot_directories())
-    sessions = frozenset(get_sessions())
-    depot_dirs = [dir for dir in depot_dirs if dir not in sessions]
-    print '\n'.join(depot_dirs)
 
 def main():
   if len(sys.argv) > 1:
