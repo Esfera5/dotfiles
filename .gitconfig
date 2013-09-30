@@ -2,9 +2,6 @@
   name = Igor Gatis
   email = igorgatis@gmail.com
 
-[push]
-	default = simple
-
 [color]
   ui = auto  # make it pretty
 
