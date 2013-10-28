@@ -73,7 +73,10 @@ nmap ,fa :let @*=expand("%:p")<CR> :echomsg expand('%:p')<CR>
 nmap ,gc :%s/[ <Tab>]\+$//<CR>
 
 " Shortcut to NERDTree
+let NERDTreeCaseSensitiveSort = 1
+let NERDTreeAutoDeleteBuffer = 1
 nmap ,nt :NERDTree<CR>
+
 
 "-----------------------------------------------------------------------------
 " Plugins.

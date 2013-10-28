@@ -112,6 +112,7 @@ bind '"\e[B":history-search-forward'
 export EDITOR='vim -X'
 [ -d "$HOME/bin" ] && export PATH="$HOME/bin/:$PATH"
 [ -d "$HOME/bin_local" ] && export PATH="$HOME/bin_local/:$PATH"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin/:$PATH"
 
 # TMUX stuff.
 export DEPOT="$HOME/depot"
