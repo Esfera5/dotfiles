@@ -82,6 +82,7 @@ alias vim='vim -X'
 alias vimdiff='vimdiff -X'
 alias less='less -S'
 alias rmorig='find . -name *.orig -delete'
+alias rmpyc='find . -name *.pyc -delete'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
