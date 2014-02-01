@@ -128,6 +128,8 @@ map <silent> <F6> <Esc>:call ToggleHighlightTooLongLines()<CR>
 
 source $HOME/.vim/spell.vim
 
+autocmd FileType go compiler go
+
 " Local stuff.
 if filereadable(expand('$HOME/.vimrc_local'))
   source $HOME/.vimrc_local
