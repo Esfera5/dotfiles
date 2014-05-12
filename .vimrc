@@ -1,7 +1,7 @@
 set nocompatible  " be iMproved.
+filetype off
 
 " Vundle stuff (begin)
-filetype off      " required!
 let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
 let install_bundles=0
 if !filereadable(vundle_readme)
@@ -19,9 +19,12 @@ Bundle 'scrooloose/nerdtree'
 if install_bundles == 1
   :BundleInstall
 endif
-filetype plugin indent on     " required!
 " Vundle stuff (end)
 
+" Golang.
+set runtimepath+=$GOROOT/misc/vim
+
+filetype plugin indent on
 syntax on
 set nohidden
 
@@ -127,8 +130,6 @@ endfunc
 map <silent> <F6> <Esc>:call ToggleHighlightTooLongLines()<CR>
 
 source $HOME/.vim/spell.vim
-
-autocmd FileType go compiler go
 
 " Local stuff.
 if filereadable(expand('$HOME/.vimrc_local'))
