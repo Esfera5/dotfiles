@@ -2,12 +2,23 @@ set nocompatible  " be iMproved.
 
 " Vundle stuff (begin)
 filetype off      " required!
+let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+let install_bundles=0
+if !filereadable(vundle_readme)
+  echo "Installing Vundle.."
+  silent !mkdir -p ~/.vim/bundle
+  silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+  let install_bundles=1
+endif
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'scrooloose/nerdtree'
 "Bundle 'Valloric/YouCompleteMe'
 "Bundle 'scrooloose/syntastic'
+if install_bundles == 1
+  :BundleInstall
+endif
 filetype plugin indent on     " required!
 " Vundle stuff (end)
 
@@ -73,7 +84,10 @@ nmap ,fa :let @*=expand("%:p")<CR> :echomsg expand('%:p')<CR>
 nmap ,gc :%s/[ <Tab>]\+$//<CR>
 
 " Shortcut to NERDTree
+let NERDTreeCaseSensitiveSort = 1
+let NERDTreeAutoDeleteBuffer = 1
 nmap ,nt :NERDTree<CR>
+
 
 "-----------------------------------------------------------------------------
 " Plugins.
@@ -113,6 +127,8 @@ endfunc
 map <silent> <F6> <Esc>:call ToggleHighlightTooLongLines()<CR>
 
 source $HOME/.vim/spell.vim
+
+autocmd FileType go compiler go
 
 " Local stuff.
 if filereadable(expand('$HOME/.vimrc_local'))

@@ -82,6 +82,7 @@ alias vim='vim -X'
 alias vimdiff='vimdiff -X'
 alias less='less -S'
 alias rmorig='find . -name *.orig -delete'
+alias rmpyc='find . -name *.pyc -delete'
 alias wip="git commit -a -m'WIP.'"
 
 # Add an "alert" alias for long running commands.  Use like so:
@@ -113,6 +114,7 @@ bind '"\e[B":history-search-forward'
 export EDITOR='vim -X'
 [ -d "$HOME/bin" ] && export PATH="$HOME/bin/:$PATH"
 [ -d "$HOME/bin_local" ] && export PATH="$HOME/bin_local/:$PATH"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin/:$PATH"
 
 # TMUX stuff.
 export DEPOT="$HOME/depot"
