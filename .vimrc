@@ -22,7 +22,8 @@ endif
 " Vundle stuff (end)
 
 " Golang.
-set runtimepath+=$GOROOT/misc/vim
+set rtp+=$GOROOT/misc/vim
+"let g:gofmt_command = "goimports"
 
 filetype plugin indent on
 syntax on
