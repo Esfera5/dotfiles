@@ -23,7 +23,8 @@ endif
 
 " Golang.
 set rtp+=$GOROOT/misc/vim
-"let g:gofmt_command = "goimports"
+let g:gofmt_command = "goimports"
+autocmd FileType go autocmd BufWritePre <buffer> Fmt
 
 filetype plugin indent on
 syntax on
