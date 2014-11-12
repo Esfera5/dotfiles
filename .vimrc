@@ -14,6 +14,8 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'scrooloose/nerdtree'
+Bundle 'solarnz/thrift.vim'
+Bundle 'fatih/vim-go'
 "Bundle 'Valloric/YouCompleteMe'
 "Bundle 'scrooloose/syntastic'
 if install_bundles == 1
@@ -21,10 +23,12 @@ if install_bundles == 1
 endif
 " Vundle stuff (end)
 
-" Golang.
-set rtp+=$GOROOT/misc/vim
-let g:gofmt_command = "goimports"
-autocmd FileType go autocmd BufWritePre <buffer> Fmt
+"" Golang.
+"if executable('goimports')
+"  let g:gofmt_command = 'goimports'
+"endif
+"set rtp+=$GOROOT/misc/vim
+"autocmd FileType go autocmd BufWritePre <buffer> Fmt
 
 filetype plugin indent on
 syntax on
