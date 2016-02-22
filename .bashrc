@@ -25,46 +25,25 @@ bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 bind '"\e[1;5C": forward-word'
 bind '"\e[1;5D": backward-word'
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
 
 export MACHINE="${HOSTNAME/\.*/}"
 export EDITOR='vim'
 
-# Prompt line.
-function __update_prompt() {
-  export GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-  local p_time="\[\e[1;30m\]\t"
-  local p_host="\[\e[1;32m\]$MACHINE"
-  local p_path="\[\e[1;34m\]${PWD/#$HOME/~}"
-  if [ "${PWD/#$HOME/~}" != "/" ]; then
-    p_path="$p_path/"
-  fi
-  local p_git=""
-  if [ -n "$GIT_BRANCH" ]; then
-    p_git="\[\e[1;33m\][$GIT_BRANCH]"
-  fi
-  local p_end="\[\e[0m\]$ "
-  # Exporting values.
-  PS1="${p_time} ${p_host}:${p_path}${p_git}${p_end}"
-  export PROMPT_TEXT=""
-  if [ -n "$TMUX" ]; then
-    export PROMPT_TEXT="\033k$(echo $GIT_BRANCH)\033\\"
-  elif [[ "$TERM" =~ "xterm" ]]; then
-    export PROMPT_TEXT="\e]0;$MACHINE:${PWD/$HOME/~}$\007"
-  fi
+function __git_ps1_branch() {
+  # On Cygwin, git is quite slow. That's why we parse HEAD manually.
+  local slashes=${PWD//[^\/]/}
+  local gitdir="$PWD"
+  for (( n=${#slashes}; n>0; --n )); do
+    if [ -f "$gitdir/.git/HEAD" ]; then
+      local ref=$(<"$gitdir/.git/HEAD")
+      echo " [${ref##*/}]"
+      return
+    fi
+    gitdir="$gitdir/.."
+  done
 }
 
-export PROMPT_COMMAND='__update_prompt ; echo -ne "$(echo $PROMPT_TEXT)"'
+export PS1='\[\e[1;30m\]\t \[\e[1;32m\]$MACHINE \[\e[1;34m\]\w\[\e[1;33m\]$(__git_ps1_branch)\[\e[0m\]$ '
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -91,36 +70,11 @@ alias rmorig='find . -name *.orig -delete'
 alias rmpyc='find . -name *.pyc -delete'
 alias wip="git commit -a -m'WIP.'"
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i \
-"$([ $? = 0 ] && echo terminal || echo error)" \
-"$(history | tail -n1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+# Local settings.
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
-fi
-
-# Make bash autocomplete with up arrow.
-bind '"\e[A":history-search-backward'
-bind '"\e[B":history-search-forward'
-
-export EDITOR='vim -X'
 [ -d "$HOME/bin" ] && export PATH="$HOME/bin/:$PATH"
 [ -d "$HOME/bin_local" ] && export PATH="$HOME/bin_local/:$PATH"
-[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin/:$PATH"
+[ -f $HOME/.bashrc_local ] && source $HOME/.bashrc_local
 
 # TMUX stuff.
 export DEPOT="$HOME/depot"
@@ -146,7 +100,4 @@ if [ -z "$TMUX" ]; then
   }
   complete -o nospace -C "$HOME/bin/tmux-complete.py" rsc
 fi
-
-# Local stuff.
-[ -f $HOME/.bashrc_local ] && source $HOME/.bashrc_local
 
