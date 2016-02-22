@@ -20,6 +20,11 @@ HISTFILESIZE=2000
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+# Make bash autocomplete with up arrow.
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+bind '"\e[1;5C": forward-word'
+bind '"\e[1;5D": backward-word'
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
@@ -33,14 +38,15 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 export MACHINE="${HOSTNAME/\.*/}"
+export EDITOR='vim'
 
+# Prompt line.
 function __update_prompt() {
   export GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-  local p_root="\[\e[0m\]${debian_chroot:+($debian_chroot)}"
   local p_time="\[\e[1;30m\]\t"
   local p_host="\[\e[1;32m\]$MACHINE"
   local p_path="\[\e[1;34m\]${PWD/#$HOME/~}"
-  if [[ ! "$p_path" =~ /$ ]]; then
+  if [ "${PWD/#$HOME/~}" != "/" ]; then
     p_path="$p_path/"
   fi
   local p_git=""
@@ -49,7 +55,7 @@ function __update_prompt() {
   fi
   local p_end="\[\e[0m\]$ "
   # Exporting values.
-  PS1="${p_root}${p_time} ${p_host}:${p_path}${p_git}${p_end}"
+  PS1="${p_time} ${p_host}:${p_path}${p_git}${p_end}"
   export PROMPT_TEXT=""
   if [ -n "$TMUX" ]; then
     export PROMPT_TEXT="\033k$(echo $GIT_BRANCH)\033\\"

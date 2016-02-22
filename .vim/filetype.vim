@@ -10,8 +10,6 @@ augroup filetypedetect
   au! BufRead,BufNewFile *.{gyp,gypi,gclient}       setf python
   au! BufRead,BufNewFile *.{proto,protodevel}       setf proto
   au! BufRead,BufNewFile .tmux.conf*                setf tmux
-  au! BufRead,BufNewFile *.ninja                    setf ninja
-  au! BufRead,BufNewFile *.ino                      setf cpp
 augroup END
 
 " Some languages prefers tabs.

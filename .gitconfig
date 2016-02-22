@@ -14,7 +14,7 @@
 [alias]
   vimdiff = diff --tool=vimdiff
   diff = diff --relative
-  dd = diff --relative --name-only
+  dd = diff --relative --name-status
   p = diff --relative --name-only
   l = log --decorate
   lg = log --decorate --graph
