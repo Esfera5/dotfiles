@@ -26,10 +26,9 @@ bind '"\e[B": history-search-forward'
 bind '"\e[1;5C": forward-word'
 bind '"\e[1;5D": backward-word'
 
-export MACHINE="${HOSTNAME/\.*/}"
 export EDITOR='vim'
 
-function __git_ps1_branch() {
+function __git_ps1_cygwin_branch() {
   # On Cygwin, git is quite slow. That's why we parse HEAD manually.
   local slashes=${PWD//[^\/]/}
   local gitdir="$PWD"
@@ -43,7 +42,31 @@ function __git_ps1_branch() {
   done
 }
 
-export PS1='\[\e[1;30m\]\t \[\e[1;32m\]$MACHINE \[\e[1;34m\]\w\[\e[1;33m\]$(__git_ps1_branch)\[\e[0m\]$ '
+function __git_ps1_branch() {
+  local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+  if [ -n "$branch" ]; then
+    echo " [$branch]"
+  fi
+}
+
+function __ps1_setup() {
+  local time_p='\[\e[1;30m\]\t'
+  local host_p='\[\e[1;32m\]\h'
+  local path_p='\[\e[1;34m\]\w'
+  local end_p='\[\e[0m\]\$ '
+  case $OSTYPE in
+    *win*|*msys*)
+      local branch_p='\[\e[1;33m\]$(__git_ps1_cygwin_branch)'
+      export PS1="$time_p $host_p $path_p$branch_p$end_p"
+      ;;
+    *)
+      local branch_p='\[\e[1;33m\]$(__git_ps1_branch)'
+      export PS1="$time_p $host_p:$path_p$branch_p$end_p"
+      ;;
+  esac
+}
+
+__ps1_setup
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
