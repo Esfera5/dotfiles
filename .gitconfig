@@ -9,7 +9,10 @@
   color = auto
 
 [merge]
-  tool = vimdiff
+  tool = vimdiff3
+
+[mergetool]
+	keepBackup = false
 
 [alias]
   vimdiff = diff --tool=vimdiff
