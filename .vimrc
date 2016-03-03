@@ -1,35 +1,6 @@
 set nocompatible  " be iMproved.
 filetype off
 
-" Vundle stuff (begin)
-let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
-let install_bundles=0
-if !filereadable(vundle_readme)
-  echo "Installing Vundle.."
-  silent !mkdir -p ~/.vim/bundle
-  silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
-  let install_bundles=1
-endif
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
-Bundle 'scrooloose/nerdtree'
-Bundle 'solarnz/thrift.vim'
-Bundle 'fatih/vim-go'
-"Bundle 'Valloric/YouCompleteMe'
-"Bundle 'scrooloose/syntastic'
-if install_bundles == 1
-  :BundleInstall
-endif
-" Vundle stuff (end)
-
-"" Golang.
-"if executable('goimports')
-"  let g:gofmt_command = 'goimports'
-"endif
-"set rtp+=$GOROOT/misc/vim
-"autocmd FileType go autocmd BufWritePre <buffer> Fmt
-
 filetype plugin indent on
 syntax on
 set nohidden
